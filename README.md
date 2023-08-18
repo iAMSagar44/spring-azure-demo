@@ -33,6 +33,9 @@ az account set --subscription <your-subscription-id>
 ### Provision the Resources
 After login Azure CLI with your account, now you can use the terraform script to create Azure Resources.
 
+Before running the Terraform scripts, update the firewall rule for the Azure MySQL Database Server with your client ip. This is to ensure the application which you will be running locally can connect to the SQL Database in Azure.
+Update end_ip_address and start_ip_address in the main.tf file with your ip address. Verify your IP address before saving the configuration. You can use a search engine or other online tool to check your own IP address. For example, search for "what is my IP."
+
 #### Run with Bash
 
 ```shell
@@ -48,7 +51,32 @@ It will take a few minutes for the script to run. After the script is successful
 
 You can go to [Azure portal](https://ms.portal.azure.com/) in your web browser to check the resources you created.
 
-## Setting the Database users -- TBC
+## Setting the Database users
+
+Before you run the application you need to set up users in the Database you just deployed using Terraform.
+The Terraform scripts would have deployed and configured a database named 'demo_db' in Azure. 
+Run this command to verify if the database has been deployed and configured.
+
+```shell
+az mysql flexible-server db show --resource-group springcloudapp-poc-rg --server-name spring-demo-mysql-flexible-server --database-name demo_db
+```
+Connect to this Database using Azure CLI. Replace the username and password parameters below with the Database admin username and password that was created as part of the Database deployment.You can get the Database Admin Username and password by entering the terraform directory and running the following commands - terraform output admin_login and terraform output admin_password
+
+```shell
+az mysql flexible-server connect -n spring-demo-mysql-flexible-serve -u username -p "password" -d demo_db --interactive
+```
+Once you are connected to the Database, you can create a non admin user that is used by the Spring Boot Application and that is configured in Azure Key Vault as secrets. In this application the non admin user and password is 'springapp_01' and 'springapp#44'.
+
+In the SQL shell window, run the following commands.
+
+```shell
+CREATE USER 'springapp_01'@'%' IDENTIFIED BY 'springapp#44';
+
+GRANT ALL PRIVILEGES ON demo_db . * TO 'springapp_01'@'%';
+
+FLUSH PRIVILEGES;
+```
+You can now connect to the database with this new user.
 
 ## Run Locally
 
