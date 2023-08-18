@@ -95,9 +95,9 @@ resource "azurerm_mysql_flexible_database" "demo_db" {
 resource "azurerm_mysql_flexible_server_firewall_rule" "demo_fw" {
   name                = "home"
   resource_group_name = azurerm_resource_group.rg.name
-  end_ip_address      = "149.167.181.51" //replace with machine's or app's ip address
+  end_ip_address      = "xxx.xxx.xxx.xx" //replace with machine's or app's ip address
   server_name         = azurerm_mysql_flexible_server.sql_flex_demo.name
-  start_ip_address    = "149.167.181.51" //replace with machine's or app's ip address
+  start_ip_address    = "xxx.xxx.xxx.xx" //replace with machine's or app's ip address
 }
 
 resource "azurerm_key_vault_secret" "kv_secret_01" {
